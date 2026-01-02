@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CategoryModule } from 'src/modules/category/category.module';
 import { AppController } from './app.controller';
 import { typeOrmConfig } from './configs/typeorm.config';
 
@@ -13,6 +14,7 @@ import { typeOrmConfig } from './configs/typeorm.config';
 		}),
 
 		TypeOrmModule.forRoot(typeOrmConfig),
+		CategoryModule,
 	],
 	controllers: [AppController],
 })
