@@ -36,17 +36,17 @@ export class CategoryEntity extends BaseEntity {
 	readonly isActive: boolean;
 
 	@ApiProperty({
-		example: '2024-01-01T10:00:00.000Z',
+		example: new Date(),
 		description: 'created at',
-		default: '2024-01-01T10:00:00.000Z',
+		default: new Date(),
 	})
 	@CreateDateColumn({ type: 'timestamptz' })
 	readonly createdAt: Date;
 
 	@ApiProperty({
-		example: '2024-01-01T10:00:00.000Z',
+		example: new Date(),
 		description: 'updated at',
-		default: '2024-01-01T10:00:00.000Z',
+		default: new Date(),
 	})
 	@UpdateDateColumn({ type: 'timestamptz' })
 	readonly updatedAt: Date;
