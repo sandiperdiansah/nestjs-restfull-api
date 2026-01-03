@@ -3,8 +3,8 @@ import { FindOptionsWhere, ILike, IsNull } from 'typeorm';
 import {
 	CategoryContract,
 	CreateCategoryRequest,
-	FindAllCategoryWhereRequest,
-	FindOneCategoryWhereRequest,
+	FindAllCategoryRequest,
+	FindOneCategoryRequest,
 	UpdateCategoryRequest,
 } from './category.contract';
 import { CategoryEntity } from './category.entity';
@@ -27,9 +27,7 @@ export class CategoryService implements CategoryContract {
 		}
 	}
 
-	async findAll(
-		query: FindAllCategoryWhereRequest,
-	): Promise<[CategoryEntity[], number]> {
+	async findAll(query: FindAllCategoryRequest): Promise<[CategoryEntity[], number]> {
 		const { offset, limit = 10, search, sort, order, page } = query;
 		const where: FindOptionsWhere<CategoryEntity>[] = [];
 
@@ -54,10 +52,7 @@ export class CategoryService implements CategoryContract {
 		});
 	}
 
-	async findOne(
-		id: string,
-		request?: FindOneCategoryWhereRequest,
-	): Promise<CategoryEntity> {
+	async findOne(id: string, request?: FindOneCategoryRequest): Promise<CategoryEntity> {
 		try {
 			const entity = await this.categoryRepository.findOne({
 				where: { id },

@@ -5,8 +5,8 @@ import {
 	CreateCategoryRequest,
 	CreateCategoryResponse,
 	DeleteCategoryResponse,
+	FindAllCategoryRequest,
 	FindAllCategoryResponse,
-	FindAllCategoryWhereRequest,
 	FindOneCategoryResponse,
 	NotFoundCategoryResponse,
 	RestoreCategoryResponse,
@@ -51,7 +51,7 @@ export class CategoryController {
 	})
 	@Get()
 	async findAll(
-		@Query() query: FindAllCategoryWhereRequest,
+		@Query() query: FindAllCategoryRequest,
 	): Promise<FindAllCategoryResponse> {
 		const { offset = 0, limit = 10, ...rest } = query;
 

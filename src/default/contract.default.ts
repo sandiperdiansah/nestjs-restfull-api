@@ -3,7 +3,23 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNumber, IsOptional, Min } from 'class-validator';
 import { WhereOrder } from './enum.default';
 
-export abstract class DefaultFindAllWhereRequest {
+export interface DefaultResourceContract<
+	TEntity,
+	TCreateRequest,
+	TUpdateRequest,
+	TFindAllRequest,
+	TFindOneRequest,
+> {
+	create?(request: TCreateRequest): Promise<TEntity>;
+	findAll?(query: TFindAllRequest): Promise<[TEntity[], number]>;
+	findOne?(id: string, request?: TFindOneRequest): Promise<TEntity>;
+	update?(id: string, request: TUpdateRequest): Promise<TEntity>;
+	delete?(id: string): Promise<void>;
+	restore?(id: string): Promise<void>;
+	forceDelete?(id: string): Promise<void>;
+}
+
+export abstract class DefaultFindAllRequest {
 	@ApiPropertyOptional({ example: 0, description: 'offset', default: 0 })
 	@Type(() => Number)
 	@IsNumber()
@@ -59,25 +75,9 @@ export abstract class DefaultPaginationMeta {
 	readonly total: number = 0;
 }
 
-export abstract class DefaultFindOneWhereRequest {
+export abstract class DefaultFindOneRequest {
 	@ApiProperty({ example: false, description: 'with deleted', default: false })
 	@IsBoolean()
 	@IsOptional()
 	readonly withDeleted?: boolean = false;
-}
-
-export interface DefaultResourceContract<
-	TEntity,
-	TCreateRequest,
-	TUpdateRequest,
-	TFindAllWhereRequest,
-	TFindOneWhereRequest,
-> {
-	create?(request: TCreateRequest): Promise<TEntity>;
-	findAll?(query: TFindAllWhereRequest): Promise<[TEntity[], number]>;
-	findOne?(id: string, request?: TFindOneWhereRequest): Promise<TEntity>;
-	update?(id: string, request: TUpdateRequest): Promise<TEntity>;
-	delete?(id: string): Promise<void>;
-	restore?(id: string): Promise<void>;
-	forceDelete?(id: string): Promise<void>;
 }

@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
 import {
-	DefaultFindAllWhereRequest,
-	DefaultFindOneWhereRequest,
+	DefaultFindAllRequest,
+	DefaultFindOneRequest,
 	DefaultPaginationMeta,
 	DefaultResourceContract,
 } from '../../default';
@@ -12,8 +12,8 @@ export type CategoryContract = DefaultResourceContract<
 	CategoryEntity,
 	CreateCategoryRequest,
 	UpdateCategoryRequest,
-	FindAllCategoryWhereRequest,
-	FindOneCategoryWhereRequest
+	FindAllCategoryRequest,
+	FindOneCategoryRequest
 >;
 
 // create
@@ -56,7 +56,7 @@ export class CreateCategoryResponse {
 }
 
 // find all
-export class FindAllCategoryWhereRequest extends DefaultFindAllWhereRequest {}
+export class FindAllCategoryRequest extends DefaultFindAllRequest {}
 
 export class CategoryPaginationResponse {
 	@ApiProperty({ type: CategoryEntity, isArray: true })
@@ -78,7 +78,7 @@ export class FindAllCategoryResponse {
 }
 
 // find one
-export class FindOneCategoryWhereRequest extends DefaultFindOneWhereRequest {}
+export class FindOneCategoryRequest extends DefaultFindOneRequest {}
 
 export class FindOneCategoryResponse {
 	@ApiProperty({ example: 200, description: 'status code' })

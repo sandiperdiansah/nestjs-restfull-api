@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
 	CreateCategoryRequest,
-	FindAllCategoryWhereRequest,
+	FindAllCategoryRequest,
 	UpdateCategoryRequest,
 } from '../category.contract';
 import { CategoryController } from '../category.controller';
@@ -78,7 +78,7 @@ describe('CategoryController', () => {
 
 	describe('findAll', () => {
 		it('should find all categories', async () => {
-			const query: FindAllCategoryWhereRequest = {
+			const query: FindAllCategoryRequest = {
 				page: 1,
 				limit: 10,
 				offset: 0,
