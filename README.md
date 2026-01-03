@@ -5,7 +5,7 @@ this is a simple restfull api built with NestJs
 ## requirements
 - node.js
 - pnpm
-- postgreSQL or any other database
+- postgreSQL
 
 ## installation
 
@@ -30,7 +30,7 @@ docs: http://localhost:3000/SWAGGER_DOCS_PATH
 
 ## database
 
-### migrations
+### migration
 #### run migration
 ```bash
 $ pnpm migration:run
