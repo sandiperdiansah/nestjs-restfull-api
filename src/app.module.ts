@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeOrmConfig } from 'src/config';
 import { CategoryModule } from 'src/modules/category/category.module';
 import { AppController } from './app.controller';
-import { typeOrmConfig } from './configs/typeorm.config';
 
 @Module({
 	imports: [
@@ -12,7 +12,6 @@ import { typeOrmConfig } from './configs/typeorm.config';
 			isGlobal: true,
 			envFilePath: '.env',
 		}),
-
 		TypeOrmModule.forRoot(typeOrmConfig),
 		CategoryModule,
 	],
