@@ -21,7 +21,6 @@ export class CreateCategoryRequest {
 	@ApiProperty({
 		example: 'category name',
 		description: 'category name',
-		default: 'category name',
 	})
 	@IsNotEmpty()
 	readonly name: string;
@@ -29,7 +28,6 @@ export class CreateCategoryRequest {
 	@ApiProperty({
 		example: 'category-slug',
 		description: 'category slug',
-		default: 'category-slug',
 	})
 	@IsNotEmpty()
 	readonly slug: string;
@@ -96,7 +94,6 @@ export class UpdateCategoryRequest {
 	@ApiPropertyOptional({
 		example: 'category name',
 		description: 'category name',
-		default: 'category name',
 	})
 	@IsOptional()
 	readonly name?: string;
@@ -104,7 +101,6 @@ export class UpdateCategoryRequest {
 	@ApiPropertyOptional({
 		example: 'category-slug',
 		description: 'category slug',
-		default: 'category-slug',
 	})
 	@IsOptional()
 	readonly slug?: string;

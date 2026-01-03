@@ -11,14 +11,13 @@ import {
 
 @Entity('categories')
 export class CategoryEntity extends BaseEntity {
-	@ApiProperty({ example: 'uuid-1234', description: 'id', default: 'uuid-1234' })
+	@ApiProperty({ example: 'uuid-1234', description: 'id' })
 	@PrimaryGeneratedColumn('uuid')
 	readonly id: string;
 
 	@ApiProperty({
 		example: 'category name',
 		description: 'category name',
-		default: 'category name',
 	})
 	@Column({ type: 'varchar', length: 255, nullable: false })
 	readonly name: string;
@@ -26,12 +25,11 @@ export class CategoryEntity extends BaseEntity {
 	@ApiProperty({
 		example: 'category-slug',
 		description: 'category slug',
-		default: 'category-slug',
 	})
 	@Column({ type: 'varchar', length: 255, unique: true, nullable: false })
 	readonly slug: string;
 
-	@ApiProperty({ example: true, description: 'category status', default: true })
+	@ApiProperty({ example: true, description: 'category status' })
 	@Column({ type: 'boolean', nullable: false, default: true })
 	readonly isActive: boolean;
 
