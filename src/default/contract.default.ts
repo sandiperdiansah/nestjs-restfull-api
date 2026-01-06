@@ -1,18 +1,19 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNumber, IsOptional, Min } from 'class-validator';
-import { WhereOrder } from './enum.default';
+import { DEFAULT_ALLOWED_SORT } from 'src/default/constant.default';
+import { DefaultWhereOrder, DefaultWhereStatus } from './enum.default';
 
 export interface DefaultResourceContract<
 	TEntity,
 	TCreateRequest,
 	TUpdateRequest,
 	TFindAllRequest,
-	TFindOneRequest,
+	TFindAllResponse,
 > {
 	create?(request: TCreateRequest): Promise<TEntity>;
-	findAll?(query: TFindAllRequest): Promise<[TEntity[], number]>;
-	findOne?(id: string, request?: TFindOneRequest): Promise<TEntity>;
+	findAll?(query: TFindAllRequest): Promise<TFindAllResponse>;
+	findOne?(id: string, withDeleted?: boolean): Promise<TEntity>;
 	update?(id: string, request: TUpdateRequest): Promise<TEntity>;
 	delete?(id: string): Promise<void>;
 	restore?(id: string): Promise<void>;
@@ -20,19 +21,19 @@ export interface DefaultResourceContract<
 }
 
 export abstract class DefaultFindAllRequest {
-	@ApiPropertyOptional({ example: 0, description: 'offset', default: 0 })
-	@Type(() => Number)
-	@IsNumber()
-	@Min(0)
-	@IsOptional()
-	readonly offset?: number = 0;
-
 	@ApiPropertyOptional({ example: 1, description: 'page', default: 1 })
 	@Type(() => Number)
 	@IsNumber()
 	@Min(1)
 	@IsOptional()
 	readonly page?: number = 1;
+
+	@ApiPropertyOptional({ example: 0, description: 'offset' })
+	@Type(() => Number)
+	@IsNumber()
+	@Min(0)
+	@IsOptional()
+	readonly offset?: number;
 
 	@ApiPropertyOptional({ example: 10, description: 'limit', default: 10 })
 	@Type(() => Number)
@@ -42,26 +43,36 @@ export abstract class DefaultFindAllRequest {
 	readonly limit?: number = 10;
 
 	@ApiPropertyOptional({
-		enum: WhereOrder,
-		example: WhereOrder.DESC,
+		enum: DefaultWhereOrder,
+		example: DefaultWhereOrder.DESC,
 		description: 'order',
-		default: WhereOrder.DESC,
+		default: DefaultWhereOrder.DESC,
 	})
 	@IsOptional()
-	@IsEnum(WhereOrder)
-	readonly order?: WhereOrder = WhereOrder.DESC;
+	@IsEnum(DefaultWhereOrder)
+	readonly order?: DefaultWhereOrder = DefaultWhereOrder.DESC;
 
 	@ApiPropertyOptional({
-		example: 'createdAt',
+		example: DEFAULT_ALLOWED_SORT[0],
 		description: 'sort',
-		default: 'createdAt',
+		default: DEFAULT_ALLOWED_SORT[0],
 	})
 	@IsOptional()
-	readonly sort?: string = 'createdAt';
+	readonly sort?: string = DEFAULT_ALLOWED_SORT[0];
 
-	@ApiPropertyOptional({ example: '', description: 'search', default: '' })
+	@ApiPropertyOptional({ example: '', description: 'search' })
 	@IsOptional()
-	readonly search?: string = '';
+	readonly search?: string;
+
+	@ApiPropertyOptional({
+		enum: DefaultWhereStatus,
+		example: DefaultWhereStatus.ALL,
+		description: 'status',
+		default: DefaultWhereStatus.ALL,
+	})
+	@IsOptional()
+	@IsEnum(DefaultWhereStatus)
+	readonly status?: DefaultWhereStatus = DefaultWhereStatus.ALL;
 }
 
 export abstract class DefaultPaginationMeta {

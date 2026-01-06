@@ -53,25 +53,12 @@ export class CategoryController {
 	async findAll(
 		@Query() query: FindAllCategoryRequest,
 	): Promise<FindAllCategoryResponse> {
-		const { offset = 0, limit = 10, ...rest } = query;
-
-		const [data, total] = await this.categoryService.findAll({
-			...rest,
-			offset,
-			limit,
-		});
+		const response = await this.categoryService.findAll(query);
 
 		return {
 			statusCode: 200,
 			message: 'find all categories success',
-			data: {
-				data,
-				meta: {
-					offset,
-					limit,
-					total,
-				},
-			},
+			data: response,
 		};
 	}
 

@@ -13,6 +13,6 @@ export const typeOrmConfig: DataSourceOptions = {
 	ssl: false,
 	synchronize: false,
 
-	entities: [path.join(__dirname, '..', '..', 'modules', '**', '*.entity.{ts,js}')],
-	migrations: [path.join(__dirname, '..', '..', 'database', 'migrations', '*.{ts,js}')],
+	entities: [path.join(__dirname, '..', '**', '*.entity.{ts,js}')],
+	migrations: [path.join(__dirname, '..', 'database', 'migrations', '*.{ts,js}')],
 } as DataSourceOptions;

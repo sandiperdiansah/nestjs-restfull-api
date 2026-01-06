@@ -1,20 +1,25 @@
 import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { FindOptionsWhere, ILike, IsNull } from 'typeorm';
+import { FindOptionsWhere, ILike } from 'typeorm';
+import {
+	DEFAULT_ALLOWED_SORT,
+	DefaultWhereOrder,
+	DefaultWhereStatus,
+} from '../../default';
 import {
 	CategoryContract,
+	CategoryPaginationResponse,
+	CategoryProperties,
 	CreateCategoryRequest,
 	FindAllCategoryRequest,
-	FindOneCategoryRequest,
 	UpdateCategoryRequest,
 } from './category.contract';
-import { CategoryEntity } from './category.entity';
 import { CategoryRepository } from './category.repository';
 
 @Injectable()
 export class CategoryService implements CategoryContract {
 	constructor(private readonly categoryRepository: CategoryRepository) {}
 
-	async create(request: CreateCategoryRequest): Promise<CategoryEntity> {
+	async create(request: CreateCategoryRequest): Promise<CategoryProperties> {
 		try {
 			await this.checkSameCategory(request.slug);
 			const entity = this.categoryRepository.create({ ...request });
@@ -27,36 +32,64 @@ export class CategoryService implements CategoryContract {
 		}
 	}
 
-	async findAll(query: FindAllCategoryRequest): Promise<[CategoryEntity[], number]> {
-		const { offset, limit = 10, search, sort, order, page } = query;
-		const where: FindOptionsWhere<CategoryEntity>[] = [];
+	async findAll(query: FindAllCategoryRequest): Promise<CategoryPaginationResponse> {
+		try {
+			const {
+				page = 1,
+				limit = 10,
+				offset,
+				order = DefaultWhereOrder.DESC,
+				sort = DEFAULT_ALLOWED_SORT[0],
+				search,
+				status = DefaultWhereStatus.ALL,
+			} = query;
 
-		if (search) {
-			where.push(
-				{ deletedAt: IsNull(), name: ILike(`%${search}%`) },
-				{ deletedAt: IsNull(), slug: ILike(`%${search}%`) },
-			);
-		} else {
-			where.push({
-				deletedAt: IsNull(),
+			const where: FindOptionsWhere<CategoryProperties>[] = [];
+
+			if (search) {
+				where.push(
+					{ name: ILike(`%${search}%`) },
+					{ slug: ILike(`%${search}%`) },
+				);
+			}
+
+			if (status !== DefaultWhereStatus.ALL) {
+				where.push({ isActive: status === DefaultWhereStatus.ACTIVE });
+			}
+
+			const skip = offset ?? (page - 1) * limit;
+			const sortBy = DEFAULT_ALLOWED_SORT.includes(sort)
+				? sort
+				: DEFAULT_ALLOWED_SORT[0];
+
+			const [data, total] = await this.categoryRepository.findAndCount({
+				where,
+				order: { [sortBy]: order },
+				skip,
+				take: limit,
 			});
-		}
 
-		return this.categoryRepository.findAndCount({
-			where,
-			skip: page ? (page - 1) * limit : offset,
-			take: limit,
-			order: {
-				[sort as string]: order,
-			},
-		});
+			Logger.log('SUCCESS, CATEGORY#CATEGORY_SERVICE.FIND_ALL', data);
+
+			return {
+				data,
+				meta: {
+					offset: skip,
+					limit,
+					total,
+				},
+			};
+		} catch (error) {
+			Logger.error('ERROR, CATEGORY#CATEGORY_SERVICE.FIND_ALL', error);
+			throw error;
+		}
 	}
 
-	async findOne(id: string, request?: FindOneCategoryRequest): Promise<CategoryEntity> {
+	async findOne(id: string, withDeleted: boolean = false): Promise<CategoryProperties> {
 		try {
 			const entity = await this.categoryRepository.findOne({
 				where: { id },
-				withDeleted: request?.withDeleted || false,
+				withDeleted,
 			});
 
 			if (!entity) {
@@ -76,7 +109,10 @@ export class CategoryService implements CategoryContract {
 		}
 	}
 
-	async update(id: string, request: UpdateCategoryRequest): Promise<CategoryEntity> {
+	async update(
+		id: string,
+		request: UpdateCategoryRequest,
+	): Promise<CategoryProperties> {
 		try {
 			const entity = await this.findOne(id);
 
@@ -106,9 +142,7 @@ export class CategoryService implements CategoryContract {
 
 	async restore(id: string): Promise<void> {
 		try {
-			const entity = await this.findOne(id, {
-				withDeleted: true,
-			});
+			const entity = await this.findOne(id, true);
 
 			Logger.log('SUCCESS, CATEGORY#CATEGORY_SERVICE.RESTORE', entity);
 			await this.categoryRepository.restore(entity.id);
@@ -134,11 +168,6 @@ export class CategoryService implements CategoryContract {
 		const entity = await this.categoryRepository.findOne({ where: { slug } });
 
 		if (entity) {
-			Logger.error(
-				'ERROR, CATEGORY#CATEGORY_SERVICE.CHECK_SAME_CATEGORY',
-				'category already exists',
-				entity,
-			);
 			throw new ConflictException('category already exists');
 		}
 	}

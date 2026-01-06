@@ -1,20 +1,63 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
+import { v4 as uuid } from 'uuid';
 import {
 	DefaultFindAllRequest,
 	DefaultFindOneRequest,
 	DefaultPaginationMeta,
 	DefaultResourceContract,
 } from '../../default';
-import { CategoryEntity } from './category.entity';
 
+// contract
 export type CategoryContract = DefaultResourceContract<
-	CategoryEntity,
+	CategoryProperties,
 	CreateCategoryRequest,
 	UpdateCategoryRequest,
 	FindAllCategoryRequest,
-	FindOneCategoryRequest
+	CategoryPaginationResponse
 >;
+
+// properties
+export class CategoryProperties {
+	@ApiProperty({ example: uuid(), description: 'id' })
+	readonly id: string;
+
+	@ApiProperty({
+		example: 'category name',
+		description: 'category name',
+	})
+	readonly name: string;
+
+	@ApiProperty({
+		example: 'category-slug',
+		description: 'category slug',
+	})
+	readonly slug: string;
+
+	@ApiProperty({ example: true, description: 'category status' })
+	readonly isActive: boolean;
+
+	@ApiProperty({
+		example: new Date(),
+		description: 'created at',
+		default: new Date(),
+	})
+	readonly createdAt: Date;
+
+	@ApiProperty({
+		example: new Date(),
+		description: 'updated at',
+		default: new Date(),
+	})
+	readonly updatedAt: Date;
+
+	@ApiProperty({
+		example: null,
+		description: 'deleted at',
+		default: null,
+	})
+	readonly deletedAt?: Date;
+}
 
 // create
 export class CreateCategoryRequest {
@@ -49,16 +92,16 @@ export class CreateCategoryResponse {
 	@ApiProperty({ example: 'create category success', description: 'message' })
 	readonly message: string;
 
-	@ApiProperty({ type: CategoryEntity })
-	readonly data: CategoryEntity;
+	@ApiProperty({ type: CategoryProperties })
+	readonly data: CategoryProperties;
 }
 
 // find all
 export class FindAllCategoryRequest extends DefaultFindAllRequest {}
 
 export class CategoryPaginationResponse {
-	@ApiProperty({ type: CategoryEntity, isArray: true })
-	data: CategoryEntity[];
+	@ApiProperty({ type: CategoryProperties, isArray: true })
+	data: CategoryProperties[];
 
 	@ApiProperty({ type: DefaultPaginationMeta })
 	meta: DefaultPaginationMeta;
@@ -85,8 +128,8 @@ export class FindOneCategoryResponse {
 	@ApiProperty({ example: 'find one category success', description: 'message' })
 	readonly message: string;
 
-	@ApiProperty({ type: CategoryEntity, description: 'data' })
-	readonly data: CategoryEntity;
+	@ApiProperty({ type: CategoryProperties, description: 'data' })
+	readonly data: CategoryProperties;
 }
 
 // update
@@ -122,8 +165,8 @@ export class UpdateCategoryResponse {
 	@ApiProperty({ example: 'update category success', description: 'message' })
 	readonly message: string;
 
-	@ApiProperty({ type: CategoryEntity })
-	readonly data: CategoryEntity;
+	@ApiProperty({ type: CategoryProperties })
+	readonly data: CategoryProperties;
 }
 
 // delete

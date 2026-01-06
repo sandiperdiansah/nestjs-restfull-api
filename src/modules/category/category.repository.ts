@@ -4,7 +4,7 @@ import { CategoryEntity } from './category.entity';
 
 @Injectable()
 export class CategoryRepository extends Repository<CategoryEntity> {
-	constructor(private dataSource: DataSource) {
+	constructor(private readonly dataSource: DataSource) {
 		super(CategoryEntity, dataSource.createEntityManager());
 	}
 }
