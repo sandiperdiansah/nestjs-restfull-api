@@ -44,19 +44,17 @@ export class CategoryService implements CategoryContract {
 				status = DefaultWhereStatus.ALL,
 			} = query;
 
-			const where: FindOptionsWhere<CategoryProperties>[] = [];
-
-			if (search) {
-				where.push(
-					{ name: ILike(`%${search}%`) },
-					{ slug: ILike(`%${search}%`) },
-				);
-			}
+			const where: FindOptionsWhere<CategoryProperties>[] = search
+				? [{ name: ILike(`%${search}%`) }, { slug: ILike(`%${search}%`) }]
+				: [{}];
 
 			if (status !== DefaultWhereStatus.ALL) {
-				where.push({ isActive: status === DefaultWhereStatus.ACTIVE });
+				where.forEach((entity) => {
+					Object.assign(entity, {
+						isActive: status === DefaultWhereStatus.ACTIVE,
+					});
+				});
 			}
-
 			const skip = offset ?? (page - 1) * limit;
 			const sortBy = DEFAULT_ALLOWED_SORT.includes(sort)
 				? sort
