@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 
+import { AppModule } from '@/app/app.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from 'src/config';
-import { CategoryModule } from 'src/modules/category/category.module';
-import { AppController } from './app.controller';
 
 @Module({
 	imports: [
@@ -13,8 +12,7 @@ import { AppController } from './app.controller';
 			envFilePath: '.env',
 		}),
 		TypeOrmModule.forRoot(typeOrmConfig),
-		CategoryModule,
+		AppModule,
 	],
-	controllers: [AppController],
 })
-export class AppModule {}
+export class MainModule {}
